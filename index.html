@@ -629,8 +629,7 @@ const cases = [
 const caseSidebar = document.getElementById('caseSidebar');
 cases.forEach(c=>{
   const el = document.createElement('a');
-  el.className = 'case-item ' + (c.status==='active' ? 'active' : c.status==='locked' ? 'locked' : '');
-  el.href = c.href || '#';
+  el.className = 'case-item ' + (c.status==='active' ? 'active' : c.status==='locked' ? 'locked' : 'open');  el.href = c.href || '#';
   if(c.status!=='open'){ el.addEventListener('click', e=>e.preventDefault()); }
   el.innerHTML = `<span class="ci-title">${c.title}</span><span class="ci-tag">${c.tag}</span>`;
   caseSidebar.appendChild(el);
