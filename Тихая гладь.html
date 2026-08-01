@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тихая гладь — Расследование Кирин-Тора</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cinzel+Decorative:wght@700;900&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#0a0714;
+  --void-2:#120b23;
+  --panel:#181030;
+  --panel-2:#20163d;
+  --stone:#2a2044;
+  --violet:#8b5cf6;
+  --violet-deep:#5b32b0;
+  --cyan:#54e0ea;
+  --gold:#d4af5a;
+  --gold-dim:#8a7238;
+  --parchment:#ece1c3;
+  --parchment-2:#e2d4ab;
+  --ink:#2a2013;
+  --ink-soft:#4a3d28;
+  --text:#e9e4f5;
+  --text-dim:#a89fc4;
+  --danger:#e0616b;
+  --success:#6ee6b0;
+  --line: rgba(139,92,246,0.35);
+  --radius: 4px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:
+    radial-gradient(ellipse at 20% -10%, rgba(139,92,246,0.16), transparent 45%),
+    radial-gradient(ellipse at 85% 15%, rgba(84,224,234,0.10), transparent 40%),
+    var(--void);
+  color:var(--text);
+  font-family:'Spectral', serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+::selection{background:var(--violet); color:#fff;}
+
+h1,h2,h3,h4{font-family:'Cinzel', serif; letter-spacing:0.04em; margin:0; font-weight:600;}
+.eyebrow{
+  font-family:'Space Mono', monospace;
+  font-size:0.72rem;
+  letter-spacing:0.28em;
+  text-transform:uppercase;
+  color:var(--cyan);
+  display:flex; align-items:center; gap:10px;
+}
+.eyebrow::before{content:''; width:22px; height:1px; background:var(--cyan); display:block;}
+
+/* ---------- background arcane texture ---------- */
+.bg-runes{
+  position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0.5;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, rgba(233,228,245,0.5) 0, transparent 50%),
+    radial-gradient(1px 1px at 80% 10%, rgba(233,228,245,0.4) 0, transparent 50%),
+    radial-gradient(1.5px 1.5px at 60% 70%, rgba(233,228,245,0.35) 0, transparent 50%),
+    radial-gradient(1px 1px at 30% 85%, rgba(233,228,245,0.4) 0, transparent 50%),
+    radial-gradient(1.5px 1.5px at 92% 55%, rgba(233,228,245,0.3) 0, transparent 50%);
+  background-size:100% 100%;
+}
+
+/* ---------- nav ---------- */
+header.topnav{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter: blur(10px);
+  background:rgba(10,7,20,0.78);
+  border-bottom:1px solid var(--line);
+}
+.topnav-inner{
+  max-width:1180px; margin:0 auto; padding:14px 28px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.brand{display:flex; align-items:center; gap:12px;}
+.brand svg{width:30px; height:30px;}
+.brand-text{font-family:'Cinzel', serif; font-size:1.02rem; letter-spacing:0.08em; color:var(--parchment);}
+.brand-text small{display:block; font-family:'Space Mono',monospace; font-size:0.6rem; letter-spacing:0.2em; color:var(--text-dim); text-transform:uppercase; margin-top:2px;}
+nav.links{display:flex; gap:26px;}
+nav.links a{
+  color:var(--text-dim); text-decoration:none; font-family:'Space Mono',monospace;
+  font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase;
+  transition:color .2s;
+}
+nav.links a:hover{color:var(--cyan);}
+@media(max-width:760px){ nav.links{display:none;} }
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative; z-index:1;
+  max-width:1180px; margin:0 auto; padding:90px 28px 60px;
+  display:grid; grid-template-columns:1.15fr 0.85fr; gap:56px; align-items:center;
+}
+@media(max-width:900px){ .hero{grid-template-columns:1fr; padding-top:56px;} }
+.hero-title{
+  font-family:'Cinzel Decorative', serif; font-weight:900;
+  font-size:clamp(2.6rem, 5.4vw, 4.4rem);
+  line-height:1.02;
+  color:var(--parchment);
+  text-shadow:0 0 40px rgba(139,92,246,0.35);
+  margin:18px 0 20px;
+}
+.hero-title em{
+  font-style:normal; color:transparent;
+  background:linear-gradient(120deg, var(--cyan), var(--violet));
+  -webkit-background-clip:text; background-clip:text;
+}
+.hero p.lede{color:var(--text-dim); font-size:1.08rem; max-width:52ch;}
+.case-tag{
+  display:inline-flex; gap:8px; align-items:center; margin-top:26px;
+  font-family:'Space Mono',monospace; font-size:0.72rem; letter-spacing:0.1em;
+  color:var(--gold); border:1px solid var(--gold-dim); padding:7px 14px; border-radius:2px;
+  background:rgba(212,175,90,0.06);
+}
+.case-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--danger); box-shadow:0 0 8px var(--danger); animation:pulse 1.8s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+/* ripple visual */
+.ripple-wrap{position:relative; aspect-ratio:1/1; max-width:380px; margin:0 auto;}
+.ripple-wrap svg{width:100%; height:100%;}
+.ripple-ring{fill:none; stroke:var(--cyan); stroke-width:1; opacity:0; transform-origin:center; animation:rip 3.6s ease-out infinite;}
+.ripple-ring.r2{animation-delay:1.2s; stroke:var(--violet);}
+.ripple-ring.r3{animation-delay:2.4s;}
+@keyframes rip{0%{opacity:0.7; transform:scale(0.15);} 100%{opacity:0; transform:scale(1);}}
+
+/* objectives */
+.objectives{
+  max-width:1180px; margin:0 auto 90px; padding:0 28px; position:relative; z-index:1;
+}
+.objectives-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:10px;}
+.objectives h2{font-size:1.5rem; color:var(--parchment);}
+.obj-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:14px;}
+@media(max-width:920px){ .obj-grid{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:520px){ .obj-grid{grid-template-columns:1fr;} }
+.obj-card{
+  background:linear-gradient(160deg, var(--panel), var(--panel-2));
+  border:1px solid var(--line); border-radius:var(--radius); padding:18px 16px;
+  position:relative; overflow:hidden;
+}
+.obj-card::before{content:attr(data-n); position:absolute; top:-10px; right:-2px; font-family:'Cinzel Decorative'; font-size:3.2rem; color:rgba(139,92,246,0.14); font-weight:900;}
+.obj-card p{margin:0; font-size:0.93rem; color:var(--text); position:relative;}
+
+/* ---------- generic section shell ---------- */
+section.block{max-width:1180px; margin:0 auto 100px; padding:0 28px; position:relative; z-index:1;}
+.block-head{margin-bottom:34px;}
+.block-head h2{font-size:clamp(1.6rem,2.6vw,2.1rem); color:var(--parchment); margin-top:10px;}
+.block-head p{color:var(--text-dim); max-width:62ch; margin-top:10px; font-size:0.98rem;}
+
+/* ---------- dossier cards ---------- */
+.dossier-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:18px;}
+.dcard{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:0; overflow:hidden; cursor:pointer; transition:transform .25s, border-color .25s;
+}
+.dcard:hover{transform:translateY(-4px); border-color:var(--violet);}
+.dcard-top{
+  padding:20px 20px 14px; border-bottom:1px dashed rgba(139,92,246,0.3);
+  display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
+}
+.dcard-top h3{font-size:1.02rem; color:var(--parchment); line-height:1.3;}
+.dcard-role{font-family:'Space Mono',monospace; font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--cyan); margin-top:6px; display:block;}
+.dcard-sigil{width:34px; height:34px; flex:0 0 auto; opacity:0.85;}
+.dcard-body{
+  max-height:0; overflow:hidden; transition:max-height .35s ease, padding .35s ease;
+  padding:0 20px; font-size:0.9rem; color:var(--text-dim);
+}
+.dcard.open .dcard-body{max-height:400px; padding:14px 20px 20px;}
+.dcard-body p{margin:0 0 10px;}
+.dcard-hint{font-family:'Space Mono',monospace; font-size:0.62rem; letter-spacing:0.1em; color:var(--text-dim); padding:10px 20px; opacity:0.6;}
+
+/* ---------- witnesses accordion ---------- */
+.witness-list{display:flex; flex-direction:column; gap:10px;}
+.witem{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
+.witem-head{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:16px 20px; cursor:pointer;
+}
+.witem-head h4{font-size:0.98rem; color:var(--parchment); font-family:'Cinzel',serif; font-weight:600;}
+.witem-head .who{font-family:'Space Mono',monospace; font-size:0.62rem; letter-spacing:0.1em; color:var(--text-dim); text-transform:uppercase; margin-top:4px;}
+.witem-plus{width:20px; height:20px; position:relative; flex:0 0 auto;}
+.witem-plus::before,.witem-plus::after{content:''; position:absolute; background:var(--cyan); top:50%; left:50%; transform:translate(-50%,-50%);}
+.witem-plus::before{width:14px; height:1.5px;}
+.witem-plus::after{width:1.5px; height:14px; transition:transform .25s;}
+.witem.open .witem-plus::after{transform:translate(-50%,-50%) rotate(90deg); opacity:0;}
+.witem-body{max-height:0; overflow:hidden; transition:max-height .35s ease;}
+.witem.open .witem-body{max-height:300px;}
+.witem-body-in{padding:0 20px 18px; color:var(--text-dim); font-size:0.92rem; border-top:1px dashed rgba(139,92,246,0.25); padding-top:14px;}
+
+/* ---------- evidence 3-up ---------- */
+.evi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+@media(max-width:860px){ .evi-grid{grid-template-columns:1fr;} }
+.evi-card{
+  background:
+    linear-gradient(rgba(10,7,20,0.55),rgba(10,7,20,0.75)),
+    repeating-linear-gradient(135deg, rgba(139,92,246,0.05) 0 2px, transparent 2px 8px);
+  border:1px solid var(--line); border-radius:var(--radius); padding:22px;
+}
+.evi-card h4{font-size:0.75rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); font-family:'Space Mono',monospace; margin-bottom:14px;}
+.evi-card ul{margin:0; padding-left:18px; color:var(--text-dim); font-size:0.9rem;}
+.evi-card li{margin-bottom:8px;}
+.evi-card li::marker{color:var(--cyan);}
+
+/* ---------- golem memory fragments ---------- */
+.mem-strip{display:flex; gap:14px; overflow-x:auto; padding-bottom:10px;}
+.mem-frag{
+  min-width:170px; flex:0 0 auto; height:120px;
+  background:linear-gradient(155deg, rgba(84,224,234,0.10), rgba(139,92,246,0.10));
+  border:1px solid var(--line); border-radius:var(--radius);
+  display:flex; align-items:center; justify-content:center; text-align:center; padding:14px;
+  font-family:'Space Mono',monospace; font-size:0.76rem; color:var(--text);
+  position:relative; overflow:hidden;
+}
+.mem-frag::after{
+  content:''; position:absolute; inset:0;
+  background:repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,0.03) 3px 4px);
+  mix-blend-mode:overlay;
+}
+.mem-frag span{position:relative; z-index:1;}
+.mem-note{margin-top:14px; color:var(--text-dim); font-size:0.85rem; font-style:italic;}
+
+/* ---------- reconstruction board ---------- */
+.board-wrap{
+  background:radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.10), transparent 60%), var(--panel);
+  border:1px solid var(--line); border-radius:8px; padding:34px 26px; position:relative;
+}
+.slots-row{position:relative; z-index:2;}
+#leyline-svg{position:absolute; inset:0; width:100%; height:100%; z-index:1; pointer-events:none;}
+.slots{
+  display:flex; flex-wrap:wrap; gap:22px 16px; justify-content:center; position:relative; z-index:2;
+}
+.slot{
+  width:112px; height:96px; border:1.5px dashed rgba(139,92,246,0.55);
+  border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  position:relative; background:rgba(10,7,20,0.5); transition:border-color .2s, background .2s;
+}
+.slot .slot-n{
+  position:absolute; top:-11px; left:50%; transform:translateX(-50%);
+  width:22px; height:22px; border-radius:50%; background:var(--void-2); border:1px solid var(--gold-dim);
+  display:flex; align-items:center; justify-content:center; font-family:'Space Mono',monospace; font-size:0.68rem; color:var(--gold);
+}
+.slot.filled{border-style:solid; border-color:var(--violet); background:rgba(139,92,246,0.08);}
+.slot.correct{border-color:var(--success); box-shadow:0 0 16px rgba(110,230,176,0.35);}
+.slot.wrong{border-color:var(--danger); box-shadow:0 0 16px rgba(224,97,107,0.3);}
+.slot.dragover{background:rgba(84,224,234,0.14);}
+.card-chip{
+  width:96px; min-height:78px; padding:8px 9px; background:var(--parchment); color:var(--ink);
+  border-radius:5px; font-family:'Space Mono',monospace; font-size:0.66rem; line-height:1.35;
+  display:flex; align-items:center; text-align:center; cursor:grab; user-select:none;
+  box-shadow:0 4px 10px rgba(0,0,0,0.35); border:1px solid var(--parchment-2);
+}
+.card-chip:active{cursor:grabbing;}
+.card-chip.selected{outline:2px solid var(--cyan); outline-offset:2px;}
+
+.pool-label{
+  margin-top:36px; margin-bottom:14px; font-family:'Space Mono',monospace; font-size:0.68rem;
+  letter-spacing:0.16em; text-transform:uppercase; color:var(--text-dim); display:flex; align-items:center; gap:10px;
+}
+.pool-label::before{content:''; width:16px; height:1px; background:var(--text-dim);}
+.pool{
+  display:flex; flex-wrap:wrap; gap:12px; padding:18px; border:1px dashed rgba(255,255,255,0.14); border-radius:8px;
+  min-height:96px; background:rgba(0,0,0,0.18);
+}
+
+.board-actions{display:flex; align-items:center; gap:16px; margin-top:28px; flex-wrap:wrap;}
+.btn{
+  font-family:'Space Mono',monospace; font-size:0.76rem; letter-spacing:0.1em; text-transform:uppercase;
+  padding:12px 22px; border-radius:3px; border:1px solid var(--violet); background:transparent; color:var(--text);
+  cursor:pointer; transition:background .2s, color .2s, box-shadow .2s;
+}
+.btn:hover{background:var(--violet); box-shadow:0 0 22px rgba(139,92,246,0.45);}
+.btn.gold{border-color:var(--gold-dim); color:var(--gold);}
+.btn.gold:hover{background:var(--gold-dim); color:var(--void); box-shadow:0 0 22px rgba(212,175,90,0.4);}
+.btn:disabled{opacity:0.35; cursor:not-allowed; pointer-events:none;}
+.board-status{font-family:'Space Mono',monospace; font-size:0.78rem; color:var(--text-dim);}
+.board-status.ok{color:var(--success);}
+.board-status.bad{color:var(--danger);}
+
+/* ---------- accusation ---------- */
+.accuse-locked{
+  border:1px solid var(--line); border-radius:8px; padding:60px 30px; text-align:center; color:var(--text-dim);
+  font-family:'Space Mono',monospace; font-size:0.85rem; letter-spacing:0.04em;
+}
+.accuse-form{display:none;}
+.accuse-form.active{display:block;}
+.accuse-group{margin-bottom:30px;}
+.accuse-group h4{
+  font-size:0.75rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--cyan);
+  font-family:'Space Mono',monospace; margin-bottom:14px;
+}
+.opt-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px;}
+.opt-btn{
+  text-align:left; padding:13px 16px; border-radius:5px; border:1px solid var(--line);
+  background:var(--panel); color:var(--text); font-family:'Spectral',serif; font-size:0.9rem;
+  cursor:pointer; transition:border-color .2s, background .2s;
+}
+.opt-btn:hover{border-color:var(--violet);}
+.opt-btn.picked{border-color:var(--cyan); background:rgba(84,224,234,0.1);}
+.opt-btn.right{border-color:var(--success); background:rgba(110,230,176,0.12);}
+.opt-btn.wrong{border-color:var(--danger); background:rgba(224,97,107,0.12);}
+
+.verdict-banner{
+  margin-top:20px; padding:34px; border-radius:8px; text-align:center; display:none;
+  border:1px solid var(--success); background:rgba(110,230,176,0.06);
+}
+.verdict-banner.show{display:block;}
+.verdict-banner h3{color:var(--success); font-size:1.5rem; margin-bottom:10px;}
+.verdict-banner p{color:var(--text); max-width:64ch; margin:12px auto 0; text-align:left; font-size:0.96rem;}
+.verdict-fail{
+  margin-top:16px; font-family:'Space Mono',monospace; font-size:0.8rem; color:var(--danger); display:none;
+}
+.verdict-fail.show{display:block;}
+
+footer{
+  text-align:center; padding:50px 20px 70px; color:var(--text-dim); font-family:'Space Mono',monospace;
+  font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; position:relative; z-index:1;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-runes"></div>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <div class="brand">
+      <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="#d4af5a" stroke-width="1"/><path d="M20 5 L23 17 L35 20 L23 23 L20 35 L17 23 L5 20 L17 17 Z" fill="#8b5cf6" opacity="0.85"/></svg>
+      <div class="brand-text">Кирин-Тор<small>Бюро дознания</small></div>
+    </div>
+    <nav class="links">
+      <a href="#dossier">Досье</a>
+      <a href="#witnesses">Свидетели</a>
+      <a href="#evidence">Улики</a>
+      <a href="#board">Реконструкция</a>
+      <a href="#accusation">Обвинение</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="eyebrow">Дело №117 — Озеро Даларана</div>
+    <h1 class="hero-title">Тихая<br><em>гладь</em></h1>
+    <p class="lede">На рассвете над озером Даларана раздался тревожный звон. Вода вскипела нестабильной магией, а из мелководья голем чародеев поднял тело подданного города. Первая версия — гибель от рук элементалей. Свидетели утверждают иное.</p>
+    <div class="case-tag"><span class="dot"></span> Статус дела: открыто</div>
+  </div>
+  <div class="ripple-wrap">
+    <svg viewBox="0 0 200 200">
+      <circle class="ripple-ring" cx="100" cy="100" r="90"/>
+      <circle class="ripple-ring r2" cx="100" cy="100" r="90"/>
+      <circle class="ripple-ring r3" cx="100" cy="100" r="90"/>
+      <circle cx="100" cy="100" r="4" fill="#54e0ea"/>
+    </svg>
+  </div>
+</section>
+
+<div class="objectives">
+  <div class="objectives-head">
+    <h2>Вопросы дознания</h2>
+  </div>
+  <div class="obj-grid">
+    <div class="obj-card" data-n="01"><p>Что вызвало появление агрессивных элементалей?</p></div>
+    <div class="obj-card" data-n="02"><p>Как погиб Эдран Вейл?</p></div>
+    <div class="obj-card" data-n="03"><p>Кто находился у озера в момент его смерти?</p></div>
+    <div class="obj-card" data-n="04"><p>Связаны ли аномалия и убийство?</p></div>
+    <div class="obj-card" data-n="05"><p>Кто совершил преступление?</p></div>
+  </div>
+</div>
+
+<section class="block" id="dossier">
+  <div class="block-head">
+    <div class="eyebrow">Действующие лица</div>
+    <h2>Досье по делу</h2>
+    <p>Нажмите на карточку, чтобы раскрыть материалы Кирин-Тора по каждому из причастных.</p>
+  </div>
+  <div class="dossier-grid" id="dossierGrid"></div>
+</section>
+
+<section class="block" id="witnesses">
+  <div class="block-head">
+    <div class="eyebrow">Показания</div>
+    <h2>Очевидцы происшествия</h2>
+    <p>Четыре свидетельства, записанных стражей в первые часы после обнаружения тела.</p>
+  </div>
+  <div class="witness-list" id="witnessList"></div>
+</section>
+
+<section class="block" id="evidence">
+  <div class="block-head">
+    <div class="eyebrow">Осмотр</div>
+    <h2>Улики с места преступления</h2>
+    <p>Отчёт целителей и стражи по телу, набережной и дну озера.</p>
+  </div>
+  <div class="evi-grid">
+    <div class="evi-card">
+      <h4>Тело</h4>
+      <ul>
+        <li>Узкий кровоподтёк на шее.</li>
+        <li>Причина смерти — удушение шнуром или проволокой, укреплёнными магией.</li>
+        <li>В лёгких есть вода, но её слишком мало для утопления.</li>
+        <li>На руках — следы борьбы.</li>
+        <li>Под ногтями — волокна тёмно-синей ткани и обломок кожаной перчатки.</li>
+      </ul>
+    </div>
+    <div class="evi-card">
+      <h4>Набережная</h4>
+      <ul>
+        <li>Следы двух пар обуви.</li>
+        <li>Царапина от металлической застёжки.</li>
+        <li>Капля крови и остатки арканической пыли.</li>
+        <li>Оборванная застёжка от служебного плаща.</li>
+        <li>Следы волочения тела к воде.</li>
+      </ul>
+    </div>
+    <div class="evi-card">
+      <h4>Дно озера</h4>
+      <ul>
+        <li>Расколотый арканический накопитель со складским номером.</li>
+        <li>По записям управления накопитель числится уничтоженным несколько недель назад.</li>
+        <li>Документ об уничтожении подписан помощником распорядителя складов.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="golem">
+  <div class="block-head">
+    <div class="eyebrow">Магическая память</div>
+    <h2>Фрагменты голема «Аргус-7»</h2>
+    <p>Память механизма повреждена нестабильной энергией. Лица не распознаны — слишком велико было расстояние.</p>
+  </div>
+  <div class="mem-strip" id="memStrip"></div>
+  <p class="mem-note">— обрывки, восстановленные чародеем Калденом Ро из повреждённого кристалла памяти.</p>
+</section>
+
+<section class="block" id="board">
+  <div class="block-head">
+    <div class="eyebrow">Реконструкция</div>
+    <h2>Соберите порядок событий</h2>
+    <p>Среди двадцати карточек только десять описывают то, что случилось на самом деле. Перетащите нужные карточки в рунные слоты по порядку — от первого события к последнему. Лишние карточки — ложный след.</p>
+  </div>
+
+  <div class="board-wrap">
+    <div class="slots-row">
+      <svg id="leyline-svg"></svg>
+      <div class="slots" id="slots"></div>
+    </div>
+
+    <div class="pool-label">Архив карточек — перетащите или нажмите, затем выберите слот</div>
+    <div class="pool" id="pool"></div>
+
+    <div class="board-actions">
+      <button class="btn gold" id="checkBtn">Проверить порядок</button>
+      <button class="btn" id="resetBtn">Сбросить</button>
+      <span class="board-status" id="boardStatus">Заполните все 10 слотов.</span>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="accusation">
+  <div class="block-head">
+    <div class="eyebrow">Финал дознания</div>
+    <h2>Предъявите обвинение</h2>
+    <p>Когда порядок событий восстановлен верно, Кирин-Тор допускает вас к последнему этапу — назвать виновного и обстоятельства дела.</p>
+  </div>
+
+  <div id="accuseLocked" class="accuse-locked">Раздел запечатан арканической печатью. Сначала верно соберите последовательность событий выше.</div>
+
+  <div id="accuseForm" class="accuse-form">
+    <div class="accuse-group">
+      <h4>01 — Кто виновен?</h4>
+      <div class="opt-grid" data-group="suspect"></div>
+    </div>
+    <div class="accuse-group">
+      <h4>02 — Каков мотив?</h4>
+      <div class="opt-grid" data-group="motive"></div>
+    </div>
+    <div class="accuse-group">
+      <h4>03 — Способ убийства</h4>
+      <div class="opt-grid" data-group="method"></div>
+    </div>
+    <div class="accuse-group">
+      <h4>04 — Как скрывали преступление?</h4>
+      <div class="opt-grid" data-group="conceal"></div>
+    </div>
+    <div class="accuse-group">
+      <h4>05 — Причина появления элементалей</h4>
+      <div class="opt-grid" data-group="cause"></div>
+    </div>
+
+    <button class="btn gold" id="verdictBtn">Предъявить обвинение</button>
+    <div class="verdict-fail" id="verdictFail">Кирин-Тор находит несоответствия в изложении дела. Отмеченные пункты стоит пересмотреть.</div>
+  </div>
+
+  <div class="verdict-banner" id="verdictBanner">
+    <h3>Дело раскрыто</h3>
+    <p id="verdictText"></p>
+  </div>
+</section>
+
+<footer>Кирин-Тор · Бюро дознания Даларана · Дело №117</footer>
+
+<script>
+/* ---------------- DATA ---------------- */
+
+const dossier = [
+  {
+    name:"Эдран Вейл",
+    role:"Погибший · Управление магического снабжения",
+    text:"Отвечал за учёт реагентов, кристаллов и магических накопителей, поступавших в городские учреждения. В последние недели подозревал, что часть арканических кристаллов исчезает со складов. Незадолго до смерти сообщил знакомому стражнику, что нашёл доказательства хищений и собирается встретиться с виновным. При нём обнаружена пустая кожаная папка — документы из неё пропали."
+  },
+  {
+    name:"Калден Ро",
+    role:"Чародей Даларана · Аномалии",
+    text:"Специалист по водным и арканическим аномалиям. Утверждает, что элементали появились из-за разрушенного магического накопителя, брошенного в озеро. На теле погибшего, по его заключению, нет повреждений, характерных для их нападения. Настаивает на полноценном расследовании, а не версии о несчастном случае."
+  },
+  {
+    name:"Голем «Аргус-7»",
+    role:"Городской охранный механизм",
+    text:"Участвовал в зачистке озера. Не способен свидетельствовать как разумное существо, но хранит фрагменты магической памяти, повреждённые нестабильной энергией. Лиц не распознаёт — наблюдал с большого расстояния."
+  },
+  {
+    name:"Лоран Тейл",
+    role:"Стражник · Первый на месте",
+    text:"Первым прибыл к озеру. Знал погибшего лично — за несколько дней до смерти Эдран рассказал ему о хищении накопителей. Скрывал часть сведений, поскольку Эдран просил не вмешиваться до получения доказательств. Признаётся, что в ночь убийства видел у набережной городского чиновника, но сперва промолчал."
+  },
+  {
+    name:"Марек Сорн",
+    role:"Подозреваемый · Помощник распорядителя складов",
+    text:"Утверждает, что весь вечер провёл в трактире с коллегами и никогда не встречался с Эдраном у озера. Уверенно направляет расследование к версии о нападении элементалей. На правой перчатке — небольшой разрыв со следами крови на внутренней стороне; объясняет это случайной травмой, полученной ранее."
+  }
+];
+
+const witnesses = [
+  {
+    who:"Свидетель 1 — продавщица трав",
+    title:"Спор у воды",
+    text:"Пожилая женщина закрывала лавку неподалёку от набережной. Слышала спор двух мужчин. Один из них произнёс фразу о том, что утром передаст нечто страже. После этого раздался короткий крик и звук падения в воду. Лиц не видела."
+  },
+  {
+    who:"Свидетель 2 — ученик чародея",
+    title:"Плащ у озера",
+    text:"Юный маг тренировался на верхней площадке башни. Видел, как человек в тёмно-синем плаще уходил от озера, неся под плащом папку или книгу. Через несколько минут вода начала светиться, а затем появились элементали."
+  },
+  {
+    who:"Свидетель 3 — рыбак",
+    title:"Ошибочное толкование",
+    text:"Утверждает, что видел, как элементаль утянул человека под воду. При проверке выясняется, что рыбак прибыл к озеру уже после начала магической аномалии — он видел тело, которое элементаль задел, поднимаясь из воды, и неверно понял увиденное."
+  },
+  {
+    who:"Свидетель 4 — служащий трактира",
+    title:"Отлучка через заднюю дверь",
+    text:"Подтверждает, что подозреваемый действительно был в трактире вечером. Однако примерно за час до происшествия он вышел через заднюю дверь и вернулся уже после появления элементалей. Его сапоги были мокрыми, хотя дождя в ту ночь не было."
+  }
+];
+
+const memFrags = [
+  "Двое мужчин разговаривают у воды",
+  "Один передаёт другому папку",
+  "Резкое движение",
+  "Один человек падает",
+  "Второй бросает в озеро светящийся предмет",
+  "Вода начинает бурлить"
+];
+
+// true sequence, in correct order
+const trueCards = [
+  {id:"t1", text:"Эдран приносит к озеру папку с документами."},
+  {id:"t2", text:"Подозреваемый встречает Эдрана на набережной."},
+  {id:"t3", text:"Между мужчинами происходит спор."},
+  {id:"t4", text:"Эдран отказывается отдавать доказательства."},
+  {id:"t5", text:"Эдрана душат магическим шнуром."},
+  {id:"t6", text:"Убийца забирает папку."},
+  {id:"t7", text:"Тело сбрасывают в озеро."},
+  {id:"t8", text:"В воду бросают арканический накопитель."},
+  {id:"t9", text:"Нестабильная энергия пробуждает элементалей."},
+  {id:"t10", text:"Убийца возвращается в трактир."}
+];
+
+const falseCards = [
+  {id:"f1", text:"Эдрана атакует водный элементаль."},
+  {id:"f2", text:"Эдран сам бросает накопитель в озеро."},
+  {id:"f3", text:"Чародей Калден проводит запрещённый эксперимент."},
+  {id:"f4", text:"Голем случайно убивает прохожего."},
+  {id:"f5", text:"Стражник сталкивает Эдрана в воду."},
+  {id:"f6", text:"Эдран погибает при попытке украсть накопитель."},
+  {id:"f7", text:"Рыбак заманивает жертву к озеру."},
+  {id:"f8", text:"Элементали появляются до встречи Эдрана с убийцей."},
+  {id:"f9", text:"Подозреваемый весь вечер находится в трактире."},
+  {id:"f10", text:"Эдран тонет, не сумев выбраться из воды."}
+];
+
+const accuseData = {
+  suspect:{
+    correct:"marek",
+    options:[
+      {id:"marek", label:"Марек Сорн, помощник распорядителя складов"},
+      {id:"loran", label:"Лоран Тейл, стражник"},
+      {id:"kalden", label:"Калден Ро, чародей Даларана"},
+      {id:"argus", label:"Голем «Аргус-7»"},
+      {id:"unknown", label:"Случайный горожанин"}
+    ]
+  },
+  motive:{
+    correct:"theft",
+    options:[
+      {id:"theft", label:"Эдран раскрыл хищение накопителей и собирался передать доказательства страже"},
+      {id:"quarrel", label:"Личная давняя ссора между знакомыми"},
+      {id:"romance", label:"Спор из-за романтических отношений"},
+      {id:"debt", label:"Спор из-за трактирного долга"}
+    ]
+  },
+  method:{
+    correct:"strangle",
+    options:[
+      {id:"strangle", label:"Удушение шнуром, укреплённым магией"},
+      {id:"drown", label:"Утопление в озере"},
+      {id:"blade", label:"Удар зачарованным клинком"},
+      {id:"elemental", label:"Нападение водного элементаля"}
+    ]
+  },
+  conceal:{
+    correct:"stage",
+    options:[
+      {id:"stage", label:"Тело сброшено в озеро, накопитель разбит, чтобы всё списали на элементалей"},
+      {id:"burn", label:"Тело уничтожено арканическим пламенем"},
+      {id:"hide", label:"Тело спрятано в тайнике под башней"},
+      {id:"bribe", label:"Свидетелей подкупили, чтобы они молчали"}
+    ]
+  },
+  cause:{
+    correct:"corecrack",
+    options:[
+      {id:"corecrack", label:"Повреждённый арканический накопитель заразил воду нестабильной энергией"},
+      {id:"experiment", label:"Запрещённый эксперимент чародея Калдена"},
+      {id:"spontaneous", label:"Элементали пробудились сами по себе"},
+      {id:"golemfault", label:"Голем случайно активировал древнюю магию"}
+    ]
+  }
+};
+
+const verdictText = "Полупрозрачная проекция памяти голема развеивает последние сомнения: у воды один человек затягивает шнур на шее другого. Изобличённый, подозреваемый признаёт своё присутствие у озера, но пытается назвать гибель случайностью. Кирин-Тор фиксирует дело: хищение арканических накопителей вскрыто, обстоятельства смерти Эдрана Вейла установлены, причина магической аномалии — разрушенный накопитель, брошенный в воду, чтобы скрыть убийство.";
+
+/* ---------------- RENDER: dossier ---------------- */
+const dossierGrid = document.getElementById('dossierGrid');
+dossier.forEach(p=>{
+  const el = document.createElement('div');
+  el.className='dcard';
+  el.innerHTML = `
+    <div class="dcard-top">
+      <div><h3>${p.name}</h3><span class="dcard-role">${p.role}</span></div>
+      <svg class="dcard-sigil" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="#54e0ea" stroke-width="1"/><path d="M20 8 L20 32 M8 20 L32 20" stroke="#8b5cf6" stroke-width="1"/></svg>
+    </div>
+    <div class="dcard-body"><p>${p.text}</p></div>
+    <div class="dcard-hint">нажмите, чтобы открыть материалы</div>
+  `;
+  el.addEventListener('click', ()=> el.classList.toggle('open'));
+  dossierGrid.appendChild(el);
+});
+
+/* ---------------- RENDER: witnesses ---------------- */
+const witnessList = document.getElementById('witnessList');
+witnesses.forEach(w=>{
+  const el = document.createElement('div');
+  el.className='witem';
+  el.innerHTML = `
+    <div class="witem-head">
+      <div><h4>${w.title}</h4><div class="who">${w.who}</div></div>
+      <div class="witem-plus"></div>
+    </div>
+    <div class="witem-body"><div class="witem-body-in">${w.text}</div></div>
+  `;
+  el.querySelector('.witem-head').addEventListener('click', ()=> el.classList.toggle('open'));
+  witnessList.appendChild(el);
+});
+
+/* ---------------- RENDER: golem memory ---------------- */
+const memStrip = document.getElementById('memStrip');
+memFrags.forEach(f=>{
+  const el = document.createElement('div');
+  el.className='mem-frag';
+  el.innerHTML = `<span>${f}</span>`;
+  memStrip.appendChild(el);
+});
+
+/* ---------------- RECONSTRUCTION BOARD ---------------- */
+const slotsEl = document.getElementById('slots');
+const poolEl = document.getElementById('pool');
+const boardStatus = document.getElementById('boardStatus');
+const leySvg = document.getElementById('leyline-svg');
+
+let deck = [...trueCards, ...falseCards];
+// shuffle
+for(let i=deck.length-1;i>0;i--){
+  const j = Math.floor(Math.random()*(i+1));
+  [deck[i],deck[j]] = [deck[j],deck[i]];
+}
+
+let selectedChip = null; // for click-to-place mobile flow
+
+function buildSlots(){
+  slotsEl.innerHTML='';
+  for(let i=1;i<=10;i++){
+    const s = document.createElement('div');
+    s.className='slot';
+    s.dataset.index = i;
+    s.innerHTML = `<span class="slot-n">${i}</span>`;
+    s.addEventListener('dragover', e=>{ e.preventDefault(); s.classList.add('dragover'); });
+    s.addEventListener('dragleave', ()=> s.classList.remove('dragover'));
+    s.addEventListener('drop', e=>{
+      e.preventDefault(); s.classList.remove('dragover');
+      const id = e.dataTransfer.getData('text/plain');
+      placeInSlot(id, s);
+    });
+    s.addEventListener('click', ()=>{
+      if(selectedChip){
+        placeInSlot(selectedChip, s);
+        selectedChip=null;
+        document.querySelectorAll('.card-chip.selected').forEach(c=>c.classList.remove('selected'));
+      } else if(s.classList.contains('filled')){
+        returnToPool(s);
+      }
+    });
+    slotsEl.appendChild(s);
+  }
+}
+
+function makeChip(card){
+  const c = document.createElement('div');
+  c.className='card-chip';
+  c.draggable = true;
+  c.dataset.id = card.id;
+  c.textContent = card.text;
+  c.addEventListener('dragstart', e=>{
+    e.dataTransfer.setData('text/plain', card.id);
+  });
+  c.addEventListener('click', ()=>{
+    document.querySelectorAll('.card-chip.selected').forEach(x=>x.classList.remove('selected'));
+    if(selectedChip===card.id){ selectedChip=null; return; }
+    selectedChip = card.id;
+    c.classList.add('selected');
+  });
+  return c;
+}
+
+function buildPool(){
+  poolEl.innerHTML='';
+  deck.forEach(card=>{
+    poolEl.appendChild(makeChip(card));
+  });
+}
+
+function findCard(id){
+  return trueCards.find(c=>c.id===id) || falseCards.find(c=>c.id===id);
+}
+
+function placeInSlot(id, slotEl){
+  const card = findCard(id);
+  if(!card) return;
+  // if slot already filled, bounce old card back to pool
+  if(slotEl.classList.contains('filled')){
+    returnToPool(slotEl, false);
+  }
+  // remove chip from wherever it currently is
+  const existingChip = document.querySelector(`.card-chip[data-id="${id}"]`);
+  if(existingChip) existingChip.remove();
+
+  slotEl.classList.add('filled');
+  slotEl.classList.remove('correct','wrong');
+  slotEl.dataset.card = id;
+  const chip = makeChip(card);
+  slotEl.appendChild(chip);
+  updateStatus();
+  drawLeylines();
+}
+
+function returnToPool(slotEl, redraw=true){
+  const id = slotEl.dataset.card;
+  if(!id) return;
+  const chip = slotEl.querySelector('.card-chip');
+  if(chip) chip.remove();
+  slotEl.classList.remove('filled','correct','wrong');
+  delete slotEl.dataset.card;
+  const card = findCard(id);
+  poolEl.appendChild(makeChip(card));
+  updateStatus();
+  if(redraw) drawLeylines();
+}
+
+poolEl.addEventListener('dragover', e=> e.preventDefault());
+poolEl.addEventListener('drop', e=>{
+  e.preventDefault();
+  const id = e.dataTransfer.getData('text/plain');
+  const slot = [...slotsEl.children].find(s=>s.dataset.card===id);
+  if(slot) returnToPool(slot);
+});
+
+function updateStatus(){
+  const filled = [...slotsEl.children].filter(s=>s.classList.contains('filled')).length;
+  boardStatus.textContent = filled<10 ? `Заполнено ${filled} из 10 слотов.` : "Все слоты заполнены. Можно проверять.";
+  boardStatus.className = 'board-status';
+}
+
+function drawLeylines(){
+  const rect = slotsEl.getBoundingClientRect();
+  leySvg.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
+  leySvg.innerHTML = `<defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#54e0ea"/><stop offset="100%" stop-color="#8b5cf6"/>
+  </linearGradient></defs>`;
+  const slots = [...slotsEl.children];
+  let path='';
+  slots.forEach((s,i)=>{
+    if(i===0) return;
+    const prev = slots[i-1];
+    if(prev.classList.contains('filled') && s.classList.contains('filled')){
+      const r1 = prev.getBoundingClientRect(), r2 = s.getBoundingClientRect();
+      const x1 = r1.left-rect.left+r1.width/2, y1=r1.top-rect.top+r1.height/2;
+      const x2 = r2.left-rect.left+r2.width/2, y2=r2.top-rect.top+r2.height/2;
+      leySvg.innerHTML += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="url(#lg)" stroke-width="1.5" opacity="0.55" stroke-dasharray="4 4"/>`;
+    }
+  });
+}
+window.addEventListener('resize', drawLeylines);
+
+buildSlots();
+buildPool();
+updateStatus();
+
+document.getElementById('checkBtn').addEventListener('click', ()=>{
+  const slots = [...slotsEl.children];
+  const filled = slots.filter(s=>s.classList.contains('filled'));
+  if(filled.length<10){
+    boardStatus.textContent = "Сначала заполните все 10 слотов.";
+    boardStatus.className='board-status bad';
+    return;
+  }
+  let correctCount = 0;
+  slots.forEach((s,i)=>{
+    const expected = trueCards[i].id;
+    if(s.dataset.card===expected){
+      s.classList.add('correct'); s.classList.remove('wrong');
+      correctCount++;
+    } else {
+      s.classList.add('wrong'); s.classList.remove('correct');
+    }
+  });
+  if(correctCount===10){
+    boardStatus.textContent = "Последовательность верна. Раздел обвинения разблокирован.";
+    boardStatus.className='board-status ok';
+    unlockAccusation();
+  } else {
+    boardStatus.textContent = `Верно расположено ${correctCount} из 10. Проверьте отмеченные слоты.`;
+    boardStatus.className='board-status bad';
+  }
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  [...slotsEl.children].forEach(s=>{
+    s.classList.remove('filled','correct','wrong');
+    delete s.dataset.card;
+    const chip = s.querySelector('.card-chip');
+    if(chip) chip.remove();
+  });
+  deck = [...trueCards, ...falseCards];
+  for(let i=deck.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [deck[i],deck[j]] = [deck[j],deck[i]];
+  }
+  buildPool();
+  updateStatus();
+  drawLeylines();
+});
+
+/* ---------------- ACCUSATION ---------------- */
+const accuseLocked = document.getElementById('accuseLocked');
+const accuseForm = document.getElementById('accuseForm');
+let accusationUnlocked = false;
+const picks = {};
+
+function unlockAccusation(){
+  if(accusationUnlocked) return;
+  accusationUnlocked = true;
+  accuseLocked.style.display='none';
+  accuseForm.classList.add('active');
+  buildAccuseOptions();
+  document.getElementById('accusation').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function buildAccuseOptions(){
+  Object.keys(accuseData).forEach(group=>{
+    const wrap = document.querySelector(`.opt-grid[data-group="${group}"]`);
+    wrap.innerHTML='';
+    const opts = [...accuseData[group].options].sort(()=>Math.random()-0.5);
+    opts.forEach(o=>{
+      const b = document.createElement('button');
+      b.className='opt-btn';
+      b.textContent = o.label;
+      b.type='button';
+      b.addEventListener('click', ()=>{
+        wrap.querySelectorAll('.opt-btn').forEach(x=>{x.classList.remove('picked','right','wrong');});
+        b.classList.add('picked');
+        picks[group] = o.id;
+      });
+      wrap.appendChild(b);
+    });
+  });
+}
+
+document.getElementById('verdictBtn').addEventListener('click', ()=>{
+  const groups = Object.keys(accuseData);
+  const missing = groups.filter(g=>!picks[g]);
+  if(missing.length){
+    document.getElementById('verdictFail').textContent = "Заполните все пять пунктов обвинения, прежде чем передавать дело в архив Кирин-Тора.";
+    document.getElementById('verdictFail').classList.add('show');
+    return;
+  }
+  let allCorrect = true;
+  groups.forEach(g=>{
+    const wrap = document.querySelector(`.opt-grid[data-group="${g}"]`);
+    wrap.querySelectorAll('.opt-btn').forEach(btn=>{
+      const opt = accuseData[g].options.find(o=>o.label===btn.textContent);
+      if(picks[g]===opt.id){
+        if(opt.id===accuseData[g].correct){ btn.classList.add('right'); }
+        else { btn.classList.add('wrong'); allCorrect=false; }
+      }
+    });
+  });
+  const failEl = document.getElementById('verdictFail');
+  if(allCorrect){
+    failEl.classList.remove('show');
+    document.getElementById('verdictText').textContent = verdictText;
+    document.getElementById('verdictBanner').classList.add('show');
+    document.getElementById('verdictBanner').scrollIntoView({behavior:'smooth', block:'center'});
+  } else {
+    failEl.textContent = "Кирин-Тор находит несоответствия в изложении дела. Пункты, отмеченные красным, стоит пересмотреть.";
+    failEl.classList.add('show');
+  }
+});
+</script>
+</body>
+</html>
