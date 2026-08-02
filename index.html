@@ -585,12 +585,7 @@ function getNavType(){
 
 const navType = getNavType();
 if(navType !== 'reload'){
-  let visits = parseInt(localStorage.getItem('kh_dalaran_visits') || '0', 10);
-  visits += 1;
-  localStorage.setItem('kh_dalaran_visits', String(visits));
-  if(visits <= 2){
-    refreshModal.classList.add('show');
-  }
+  refreshModal.classList.add('show');
 }
 
 document.getElementById('refreshContinueBtn').addEventListener('click', ()=>{
