@@ -566,14 +566,6 @@ footer{
       <h4>03 — Способ убийства</h4>
       <div class="opt-grid" data-group="method"></div>
     </div>
-    <div class="accuse-group">
-      <h4>04 — Как скрывали преступление?</h4>
-      <div class="opt-grid" data-group="conceal"></div>
-    </div>
-    <div class="accuse-group">
-      <h4>05 — Причина появления элементалей</h4>
-      <div class="opt-grid" data-group="cause"></div>
-    </div>
 
     <button class="btn gold" id="verdictBtn">Предъявить обвинение</button>
     <div class="verdict-fail" id="verdictFail">Кирин-Тор находит несоответствия в изложении дела. Отмеченные пункты стоит пересмотреть.</div>
@@ -746,7 +738,7 @@ const accuseData = {
   },
 };
 
-const verdictText = "«Глаза Медива» успешно справилось с поставленной задачей.";
+const verdictText = "«Глаза Медива» успешно справились с поставленной задачей.";
 
 /* ---------------- RENDER: dossier ---------------- */
 const dossierGrid = document.getElementById('dossierGrid');
@@ -981,7 +973,7 @@ document.getElementById('verdictBtn').addEventListener('click', ()=>{
   const groups = Object.keys(accuseData);
   const missing = groups.filter(g=>!picks[g]);
   if(missing.length){
-    document.getElementById('verdictFail').textContent = "Заполните все пять пунктов обвинения, прежде чем передавать дело в архив Кирин-Тора.";
+    document.getElementById('verdictFail').textContent = "Заполните все пункты обвинения, прежде чем передавать дело в архив Кирин-Тора.";
     document.getElementById('verdictFail').classList.add('show');
     return;
   }
